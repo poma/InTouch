@@ -250,12 +250,17 @@ namespace ModernDev.InTouch
         /// <summary>
         /// Occurs when an authorization fails.
         /// </summary>
-        public event EventHandler<ResponseError> AuthorizationFailed;
+        public event EventHandler<ResponseErrorEventArgs> AuthorizationFailed;
 
         /// <summary>
         /// Occurs when is need to enter captcha key.
         /// </summary>
-        public event EventHandler<ResponseError> CaptchaNeeded;
+        public event EventHandler<ResponseErrorEventArgs> CaptchaNeeded;
+
+        /// <summary>
+        /// Occurs when there are too many requests per second.
+        /// </summary>
+        public event EventHandler<ResponseErrorEventArgs> TooManyRequests;
 
         #endregion
 
@@ -540,8 +545,11 @@ namespace ModernDev.InTouch
         /// <param name="isOpenMethod">Indicates whether the method can be called without <see cref="APISession.AccessToken"/>.</param>
         /// <param name="path">Object path to select the token.</param>
         /// <returns>Returns the result of API call.</returns>
-        public async Task<Response<T>> Request<T>(string methodName, Dictionary<string, string> methodParams = null,
-            bool isOpenMethod = false, string path = null)
+        public Task<Response<T>> Request<T>(string methodName, Dictionary<string, string> methodParams = null,
+            bool isOpenMethod = false, string path = null) => RequestInternal<T>(methodName, methodParams, isOpenMethod, path, 0);
+
+        private async Task<Response<T>> RequestInternal<T>(string methodName, Dictionary<string, string> methodParams,
+            bool isOpenMethod, string path, int retryCount)
         {
             if (!isOpenMethod)
             {
@@ -569,7 +577,37 @@ namespace ModernDev.InTouch
 
             var json = await Post($"method/{methodName}", normalizedParams);
 
-            return await Task.Run(() => ParseJsonReponse<T>(json, path));
+            try
+            {
+                return await Task.Run(() => ParseJsonReponse<T>(json, path));
+            }
+            catch (InTouchResponseErrorException ex)
+            {
+                var args = new ResponseErrorEventArgs(ex.ResponseError, retryCount);
+
+                switch (ex.ResponseError.Code)
+                {
+                    case 5:
+                        OnAuthorizationFailed(args);
+                        break;
+                    case 6:
+                        OnTooManyRequests(args);
+                        break;
+                    case 14:
+                        OnCaptchaNeeded(args);
+                        break;
+                }
+
+                if (args.Handled)
+                {
+                    // Retry request
+                    return await RequestInternal<T>(methodName, methodParams, isOpenMethod, path, retryCount + 1);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -737,20 +775,9 @@ namespace ModernDev.InTouch
                 if (jObj["error"] != null)
                 {
                     errObj = jObj["error"].ToObject<ResponseError>();
-
                     if (ThrowExceptionOnResponseError)
                     {
                         throw new InTouchResponseErrorException(errObj.Message, errObj);
-                    }
-
-                    if (errObj.Code == 5)
-                    {
-                        OnAuthorizationFailed(errObj);
-                    }
-
-                    if (errObj.Code == 14)
-                    {
-                        OnCaptchaNeeded(errObj);
                     }
                 }
                 else if (jObj["response"] != null)
@@ -824,8 +851,9 @@ namespace ModernDev.InTouch
 
         private void AccessTokenExpired(object sender, EventArgs e) => OnAuthorizationFailed(null);
 
-        private void OnAuthorizationFailed(ResponseError e) => AuthorizationFailed?.Invoke(this, e);
-        private void OnCaptchaNeeded(ResponseError e) => CaptchaNeeded?.Invoke(this, e);
+        private void OnAuthorizationFailed(ResponseErrorEventArgs e) => AuthorizationFailed?.Invoke(this, e);
+        private void OnCaptchaNeeded(ResponseErrorEventArgs e) => CaptchaNeeded?.Invoke(this, e);
+        private void OnTooManyRequests(ResponseErrorEventArgs e) => TooManyRequests?.Invoke(this, e);
 
         #endregion
 

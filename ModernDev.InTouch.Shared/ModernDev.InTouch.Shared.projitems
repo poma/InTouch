@@ -378,5 +378,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Model\VideoPreview.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\VideoServerInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\VideoUploadResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)API\ResponseErrorEventArgs.cs" />
   </ItemGroup>
 </Project>
