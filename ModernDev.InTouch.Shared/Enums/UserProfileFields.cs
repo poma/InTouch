@@ -35,6 +35,9 @@ namespace ModernDev.InTouch
 
         [EnumMember(Value = "city")]
         City,
+        
+        [EnumMember(Value = "counters")]
+        Counters,
 
         [EnumMember(Value = "country")]
         Country,
