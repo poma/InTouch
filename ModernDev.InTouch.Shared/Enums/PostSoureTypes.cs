@@ -25,6 +25,12 @@ namespace ModernDev.InTouch
         /// </summary>
         [EnumMember(Value = "vk")]
         VK,
+        
+        /// <summary>
+        /// The post was created through the mobile site interface.
+        /// </summary>
+        [EnumMember(Value = "mvk")]
+        Mobile,
 
         /// <summary>
         /// The post was created using widget.
