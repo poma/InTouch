@@ -25,8 +25,18 @@ namespace ModernDev.InTouch
         [EnumMember(Value = "iphone")]
         // ReSharper disable once InconsistentNaming
         IPhone,
+        
+        [EnumMember(Value = "ipad")]
+        // ReSharper disable once InconsistentNaming
+        IPad,
 
         [EnumMember(Value = "wphone")]
-        WindowsPhone
+        WindowsPhone,
+        
+        [EnumMember(Value = "instagram")]
+        Instagram,
+        
+        [EnumMember(Value = "chronicle")]
+        Chronicle,
     }
 }

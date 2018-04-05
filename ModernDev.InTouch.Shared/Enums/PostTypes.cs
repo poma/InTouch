@@ -33,6 +33,12 @@ namespace ModernDev.InTouch
         PostPone,
 
         [EnumMember(Value = "suggest")]
-        Suggest
+        Suggest,
+        
+        [EnumMember(Value = "photo")]
+        Photo,
+        
+        [EnumMember(Value = "video")]
+        Video
     }
 }
