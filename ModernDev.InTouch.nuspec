@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
-        <id>ModernDev.InTouch</id>
+        <id>Poma.InTouch</id>
         <version>0.1.0</version>
         <title>InTouch</title>
         <authors>Bohdan Shtepan</authors>
         <owners>Bohdan Shtepan</owners>
-        <licenseUrl>https://github.com/virtyaluk/InTouch/blob/master/LICENSE</licenseUrl>
-        <projectUrl>https://github.com/virtyaluk/InTouch</projectUrl>
+        <licenseUrl>https://github.com/poma/InTouch/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/poma/InTouch</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>InTouch - is a C# wrapper for vk.com API.</description>
+        <description>[Fork] InTouch - is a C# wrapper for vk.com API.</description>
         <copyright>Copyright 2017 Bohdan Shtepan</copyright>
         <tags>vk api intouch wrapper vkontakte</tags>
         <dependencies>
