@@ -600,6 +600,9 @@ namespace ModernDev.InTouch
 
                 if (args.Handled)
                 {
+                    if (retryCount > 5) {
+                        throw new InTouchException("Too many retries for request, cancelling");
+                    }
                     // Retry request
                     return await RequestInternal<T>(methodName, methodParams, isOpenMethod, path, retryCount + 1);
                 }
