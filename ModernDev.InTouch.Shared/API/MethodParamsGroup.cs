@@ -31,7 +31,8 @@ namespace ModernDev.InTouch
             var mp = new MethodParams();
 
 #if WINDOWS_UWP81 || PORTABLE_LIB || NET_STANDARD
-            var properties = GetType().GetTypeInfo().DeclaredProperties.Where(propInfo => propInfo.CanRead);
+            //var properties = GetType().GetTypeInfo().DeclaredProperties.Where(propInfo => propInfo.CanRead);
+            var properties = GetType().GetProperties().Where(propInfo => propInfo.CanRead && propInfo.GetMethod.IsPublic);
 #else
             var properties = GetType().GetProperties(BindingFlags.Public).Where(prop => prop.CanRead);
 #endif
